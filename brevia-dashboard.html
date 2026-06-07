@@ -170,6 +170,73 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
 .usage-fill{height:100%;background:var(--accent);border-radius:100px;transition:width 0.8s ease}
 .usage-fill.warn{background:#e67e22}
 
+/* 시장 토글 */
+.market-toggle{
+  display:flex;gap:3px;background:var(--white);
+  border:1px solid var(--border);border-radius:100px;padding:3px;
+}
+.market-btn{
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  padding:6px 14px;border-radius:100px;border:none;cursor:pointer;
+  background:transparent;color:var(--muted);transition:all 0.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.market-btn.active{background:var(--ink);color:white}
+.market-btn .flag{font-size:14px}
+
+/* 시장 인디케이터 */
+.market-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:4px}
+.market-status .status-dot{width:6px;height:6px;border-radius:50%;background:var(--up)}
+.market-status .status-dot.closed{background:var(--muted)}
+
+/* 오늘의 테마 */
+.theme-card{
+  background:linear-gradient(135deg,#0d0d0d 0%,#1a472a 100%);
+  color:white;padding:24px;border-radius:16px;position:relative;overflow:hidden;
+}
+.theme-card::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);
+}
+.theme-label{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.6;margin-bottom:12px}
+.theme-list{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.theme-item{padding:14px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s}
+.theme-item:hover{background:rgba(255,255,255,0.1);transform:translateX(2px)}
+.theme-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.theme-name{font-family:var(--serif);font-size:18px;font-style:italic;letter-spacing:-0.3px}
+.theme-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.12)}
+.theme-badge.hot{background:rgba(255,100,50,0.25);color:#ffb699}
+.theme-badge.up{background:rgba(40,200,100,0.2);color:#7fd99f}
+.theme-badge.down{background:rgba(220,80,80,0.2);color:#ff9999}
+.theme-desc{font-size:12px;opacity:0.65;line-height:1.5;margin-bottom:8px;font-weight:300}
+.theme-tickers{display:flex;flex-wrap:wrap;gap:4px}
+.theme-ticker{font-size:11px;font-weight:500;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,0.1);color:white}
+
+/* 실적/공시 캘린더 */
+.calendar-card{}
+.calendar-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--paper);padding:3px;border-radius:100px;width:fit-content}
+.cal-tab{font-size:11px;font-weight:500;padding:5px 12px;border-radius:100px;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.2s}
+.cal-tab.active{background:var(--ink);color:white}
+.calendar-list{display:flex;flex-direction:column;gap:8px}
+.cal-day{padding:10px 0;border-bottom:1px solid var(--border)}
+.cal-day:last-child{border-bottom:none}
+.cal-day-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cal-date{font-family:var(--serif);font-size:14px;font-weight:500}
+.cal-weekday{font-size:11px;color:var(--muted)}
+.cal-today-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:100px;background:var(--accent);color:white;text-transform:uppercase;letter-spacing:0.05em}
+.cal-event{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:4px;cursor:pointer;transition:background 0.15s}
+.cal-event:hover{background:var(--paper)}
+.cal-event.watched{background:rgba(26,71,42,0.05);border:1px solid rgba(26,71,42,0.15)}
+.cal-event-time{font-size:10px;font-weight:600;color:var(--muted);min-width:50px}
+.cal-event-icon{width:22px;height:22px;border-radius:6px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.cal-event-icon.earnings{background:rgba(26,122,58,0.1);color:var(--up)}
+.cal-event-icon.economic{background:rgba(255,140,0,0.1);color:#cc6600}
+.cal-event-icon.fed{background:rgba(108,99,255,0.1);color:#5b53cc}
+.cal-event-name{flex:1;font-size:13px;font-weight:500}
+.cal-event-desc{font-size:11px;color:var(--muted);font-weight:300}
+.cal-event-star{color:var(--accent);font-size:11px}
+
 /* 애니메이션 */
 .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
@@ -200,21 +267,6 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
     AI 비서
   </a>
 
-  <div class="nav-section">업무</div>
-  <a class="nav-item" href="brevia-app.html">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-    회의록 요약
-  </a>
-  <a class="nav-item" href="brevia-app.html">
-    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-    이메일 작성
-  </a>
-
-  <div class="nav-section">계정</div>
-  <a class="nav-item" href="brevia-settings.html">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-    설정
-  </a>
   <div class="nav-section">투자</div>
   <a class="nav-item" href="brevia-app.html">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -223,6 +275,20 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
   <a class="nav-item" href="brevia-app.html">
     <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
     뉴스 브리핑
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    실적 캘린더
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 2"/></svg>
+    오늘의 테마
+  </a>
+
+  <div class="nav-section">계정</div>
+  <a class="nav-item" href="brevia-settings.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    설정
   </a>
 
   <div class="nav-bottom">
@@ -250,10 +316,14 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
       <p class="date-badge" id="todayDate"></p>
     </div>
     <div class="header-actions">
-      <button class="btn-sm btn-ghost-sm">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        알림
-      </button>
+      <div class="market-toggle">
+        <button class="market-btn active" onclick="switchMarket('us', this)">
+          <span class="flag">🇺🇸</span>미국
+        </button>
+        <button class="market-btn" onclick="switchMarket('kr', this)">
+          <span class="flag">🇰🇷</span>한국
+        </button>
+      </div>
       <a href="brevia-app.html" class="btn-sm btn-primary-sm" style="text-decoration:none;color:white">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         새 대화
@@ -264,24 +334,24 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
   <!-- 퀵 액션 -->
   <div class="quick-grid fade-in delay-1">
     <a class="quick-card" href="brevia-app.html">
-      <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-      <div class="quick-label">회의록 요약</div>
-      <div class="quick-desc">붙여넣기만 하면 끝</div>
-    </a>
-    <a class="quick-card" href="brevia-app.html">
       <div class="quick-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <div class="quick-label">종목 분석</div>
-      <div class="quick-desc">티커 입력 → 한국어 요약</div>
-    </a>
-    <a class="quick-card" href="brevia-app.html">
-      <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-      <div class="quick-label">이메일 작성</div>
-      <div class="quick-desc">격식체 자동 생성</div>
+      <div class="quick-desc">티커 입력 → AI 분석</div>
     </a>
     <a class="quick-card" href="brevia-app.html">
       <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div class="quick-label">보고서 작성</div>
-      <div class="quick-desc">키워드 → 초안 완성</div>
+      <div class="quick-label">SEC 파일링</div>
+      <div class="quick-desc">한국어 즉시 요약</div>
+    </a>
+    <a class="quick-card" href="brevia-app.html">
+      <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 2"/></svg></div>
+      <div class="quick-label">실적 미리보기</div>
+      <div class="quick-desc">발표 전 컨센서스 확인</div>
+    </a>
+    <a class="quick-card" href="brevia-app.html">
+      <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg></div>
+      <div class="quick-label">뉴스 브리핑</div>
+      <div class="quick-desc">오늘 시장 핵심 요약</div>
     </a>
   </div>
 
@@ -317,7 +387,9 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
         <div class="card-label" style="margin-bottom:0">관심 종목</div>
         <button class="btn-sm btn-ghost-sm" style="font-size:11px;padding:5px 10px" onclick="addStock()">+ 추가</button>
       </div>
-      <div class="stock-list" id="stockList">
+
+      <!-- 미국 종목 -->
+      <div class="stock-list market-us" id="stockList">
         <div class="stock-row">
           <div class="stock-left">
             <div class="stock-icon">NV</div>
@@ -366,6 +438,304 @@ main{flex:1;overflow-y:auto;padding:36px 40px;max-width:1100px}
           <div class="stock-right">
             <div class="stock-price">$112.55</div>
             <div class="stock-change change-neu">+0.08%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 한국 종목 -->
+      <div class="stock-list market-kr" style="display:none">
+        <div class="stock-row">
+          <div class="stock-left">
+            <div class="stock-icon">삼</div>
+            <div><div class="stock-name">삼성전자</div><div class="stock-desc">005930</div></div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">₩72,800</div>
+            <div class="stock-change change-up">+1.82%</div>
+          </div>
+        </div>
+        <div class="stock-row">
+          <div class="stock-left">
+            <div class="stock-icon">SK</div>
+            <div><div class="stock-name">SK하이닉스</div><div class="stock-desc">000660</div></div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">₩198,500</div>
+            <div class="stock-change change-up">+3.21%</div>
+          </div>
+        </div>
+        <div class="stock-row">
+          <div class="stock-left">
+            <div class="stock-icon">대</div>
+            <div><div class="stock-name">대한광통신</div><div class="stock-desc">010170</div></div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">₩4,850</div>
+            <div class="stock-change change-up">+5.43%</div>
+          </div>
+        </div>
+        <div class="stock-row">
+          <div class="stock-left">
+            <div class="stock-icon">한</div>
+            <div><div class="stock-name">한미반도체</div><div class="stock-desc">042700</div></div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">₩142,300</div>
+            <div class="stock-change change-down">-0.84%</div>
+          </div>
+        </div>
+        <div class="stock-row">
+          <div class="stock-left">
+            <div class="stock-icon">L</div>
+            <div><div class="stock-name">LG에너지솔루션</div><div class="stock-desc">373220</div></div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">₩412,500</div>
+            <div class="stock-change change-up">+1.23%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 오늘의 테마 + 실적 캘린더 -->
+  <div class="grid-2 fade-in delay-3">
+
+    <!-- 오늘의 테마 -->
+    <div class="theme-card">
+      <div class="theme-label">🔥 오늘의 테마</div>
+
+      <!-- 미국 테마 -->
+      <div class="theme-list market-us">
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">양자 컴퓨팅</span>
+            <span class="theme-badge hot">HOT</span>
+          </div>
+          <div class="theme-desc">미 국방부 IONQ 계약 발표 + 구글 양자 칩 로드맵 공개</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">IONQ +5.18%</span>
+            <span class="theme-ticker">QBTS +3.76%</span>
+            <span class="theme-ticker">RGTI +7.21%</span>
+            <span class="theme-ticker">QUBT +4.92%</span>
+          </div>
+        </div>
+
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">AI 인프라</span>
+            <span class="theme-badge up">강세</span>
+          </div>
+          <div class="theme-desc">NVDA 실적 D-3 앞두고 데이터센터 관련주 동반 강세</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">NVDA +2.41%</span>
+            <span class="theme-ticker">APLD +1.84%</span>
+            <span class="theme-ticker">SMCI +3.12%</span>
+          </div>
+        </div>
+
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">반도체 메모리</span>
+            <span class="theme-badge down">조정</span>
+          </div>
+          <div class="theme-desc">HBM 가격 협상 지연 우려로 단기 차익실현</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">MU +0.08%</span>
+            <span class="theme-ticker">WDC -1.52%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 한국 테마 -->
+      <div class="theme-list market-kr" style="display:none">
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">HBM 반도체</span>
+            <span class="theme-badge hot">HOT</span>
+          </div>
+          <div class="theme-desc">SK하이닉스 HBM3E 12단 양산 시작, 엔비디아 공급 확대</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">SK하이닉스 +3.21%</span>
+            <span class="theme-ticker">한미반도체 -0.84%</span>
+            <span class="theme-ticker">이오테크닉스 +4.12%</span>
+          </div>
+        </div>
+
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">2차전지</span>
+            <span class="theme-badge up">강세</span>
+          </div>
+          <div class="theme-desc">미국 IRA 정책 유지 기대감, 배터리 셀 업체 동반 상승</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">LG에너지솔루션 +1.23%</span>
+            <span class="theme-ticker">삼성SDI +2.15%</span>
+            <span class="theme-ticker">에코프로비엠 +3.42%</span>
+          </div>
+        </div>
+
+        <div class="theme-item" onclick="window.location.href='brevia-app.html'">
+          <div class="theme-item-header">
+            <span class="theme-name">광통신 · AI</span>
+            <span class="theme-badge up">테마</span>
+          </div>
+          <div class="theme-desc">데이터센터 광케이블 수요 증가, 애널리스트 목표가 상향</div>
+          <div class="theme-tickers">
+            <span class="theme-ticker">대한광통신 +5.43%</span>
+            <span class="theme-ticker">오이솔루션 +3.21%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실적/공시 캘린더 -->
+    <div class="card calendar-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="card-label" style="margin-bottom:0">📅 실적 · 공시 캘린더</div>
+      </div>
+      <div class="calendar-tabs">
+        <button class="cal-tab active" onclick="switchCal('all', this)">전체</button>
+        <button class="cal-tab" onclick="switchCal('watched', this)">관심 종목</button>
+        <button class="cal-tab" onclick="switchCal('economic', this)">경제지표</button>
+      </div>
+      <!-- 미국 캘린더 -->
+      <div class="calendar-list market-us">
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 9일</span>
+            <span class="cal-weekday">화요일</span>
+            <span class="cal-today-badge">오늘</span>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">장 마감</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">ORCL <span class="cal-event-desc">· Oracle</span></div>
+            </div>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">21:30</span>
+            <span class="cal-event-icon economic">지표</span>
+            <div style="flex:1">
+              <div class="cal-event-name">미국 CPI 발표 <span class="cal-event-desc">· 5월</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 11일</span>
+            <span class="cal-weekday">목요일</span>
+          </div>
+          <div class="cal-event watched">
+            <span class="cal-event-time">장 마감</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">NVDA <span class="cal-event-desc">· NVIDIA Corp</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">03:00</span>
+            <span class="cal-event-icon fed">FOMC</span>
+            <div style="flex:1">
+              <div class="cal-event-name">FOMC 금리 발표 <span class="cal-event-desc">· 동결 예상</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 12일</span>
+            <span class="cal-weekday">금요일</span>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">장 시작 전</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">ADBE <span class="cal-event-desc">· Adobe Inc</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 16일</span>
+            <span class="cal-weekday">화요일</span>
+          </div>
+          <div class="cal-event watched">
+            <span class="cal-event-time">장 시작 전</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">MU <span class="cal-event-desc">· Micron Technology</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 한국 캘린더 -->
+      <div class="calendar-list market-kr" style="display:none">
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 9일</span>
+            <span class="cal-weekday">화요일</span>
+            <span class="cal-today-badge">오늘</span>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">16:00</span>
+            <span class="cal-event-icon economic">지표</span>
+            <div style="flex:1">
+              <div class="cal-event-name">한국 5월 수출입 동향 <span class="cal-event-desc">· 관세청</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 11일</span>
+            <span class="cal-weekday">목요일</span>
+          </div>
+          <div class="cal-event watched">
+            <span class="cal-event-time">장 마감 후</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">삼성전자 <span class="cal-event-desc">· 잠정 실적 발표</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 13일</span>
+            <span class="cal-weekday">토요일</span>
+          </div>
+          <div class="cal-event">
+            <span class="cal-event-time">10:00</span>
+            <span class="cal-event-icon fed">금통위</span>
+            <div style="flex:1">
+              <div class="cal-event-name">한국은행 기준금리 결정 <span class="cal-event-desc">· 동결 우세</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
+          </div>
+        </div>
+
+        <div class="cal-day">
+          <div class="cal-day-header">
+            <span class="cal-date">6월 17일</span>
+            <span class="cal-weekday">수요일</span>
+          </div>
+          <div class="cal-event watched">
+            <span class="cal-event-time">장 마감 후</span>
+            <span class="cal-event-icon earnings">실적</span>
+            <div style="flex:1">
+              <div class="cal-event-name">SK하이닉스 <span class="cal-event-desc">· 1Q 잠정 실적</span></div>
+            </div>
+            <span class="cal-event-star">★</span>
           </div>
         </div>
       </div>
@@ -454,7 +824,6 @@ const now = new Date();
 const days = ['일','월','화','수','목','금','토'];
 document.getElementById('todayDate').textContent =
   `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]}) · 미국 시장 ${now.getHours() >= 23 || now.getHours() < 6 ? '개장 중' : '마감'}`;
-
 function addStock() {
   const ticker = prompt('종목 티커를 입력하세요 (예: AAPL)');
   if (!ticker) return;
@@ -471,6 +840,36 @@ function addStock() {
       <div class="stock-change change-neu">대기 중</div>
     </div>`;
   list.appendChild(row);
+}
+
+function switchCal(type, btn) {
+  document.querySelectorAll('.cal-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  // 실제 연동 시 캘린더 필터링 로직 추가
+}
+
+function switchMarket(market, btn) {
+  document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // 미국/한국 콘텐츠 토글
+  document.querySelectorAll('.market-us').forEach(el => {
+    el.style.display = market === 'us' ? '' : 'none';
+  });
+  document.querySelectorAll('.market-kr').forEach(el => {
+    el.style.display = market === 'kr' ? '' : 'none';
+  });
+
+  // 날짜 텍스트 시장 상태 업데이트
+  const hour = now.getHours();
+  let statusText;
+  if (market === 'us') {
+    statusText = (hour >= 23 || hour < 6) ? '미국 시장 개장 중' : '미국 시장 마감';
+  } else {
+    statusText = (hour >= 9 && hour < 16) ? '한국 시장 개장 중' : '한국 시장 마감';
+  }
+  document.getElementById('todayDate').textContent =
+    `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]}) · ${statusText}`;
 }
 </script>
 </body>
