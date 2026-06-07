@@ -6,7 +6,13 @@
 <title>Brevia — 로그인</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const _supabase = supabase.createClient(
+    'https://xhuvhugbsoqfhyhtxmzt.supabase.co',
+    'sb_publishable_wR0CHbnkH_21LoospTgSFw_k2cOqeW5'
+  );
+</script>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --ink:#0d0d0d;--paper:#f5f2eb;--accent:#1a472a;--accent-light:#2d6a4f;
   --muted:#6b6b6b;--border:rgba(13,13,13,0.1);--white:#fff;
@@ -453,26 +459,25 @@ function socialLogin(provider) {
 }
 
 async function doLogin() {
+  async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw = document.getElementById('loginPw').value;
   let valid = true;
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    valid = showError('loginEmail');
-  }
-  if (!pw) {
-    valid = showError('loginPw');
-  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) valid = showError('loginEmail');
+  if (!pw) valid = showError('loginPw');
   if (!valid) return;
 
   setLoading('login', true);
-  // 실제 연동 시 Supabase auth.signIn 사용
-  await new Promise(r => setTimeout(r, 1200));
+  const { error } = await _supabase.auth.signInWithPassword({ email, password: pw });
   setLoading('login', false);
+
+  if (error) {
+    showError('loginPw', '이메일 또는 비밀번호가 틀렸어요');
+    return;
+  }
   document.getElementById('loginForm').querySelector('.auth-tabs').style.opacity = '0.3';
   showSuccess('loginSuccess');
 }
-
 async function doSignup() {
   const name = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
@@ -484,10 +489,18 @@ async function doSignup() {
   if (!pw || pw.length < 8) valid = showError('signupPw');
   if (!valid) return;
 
-  setLoading('signup', true);
-  await new Promise(r => setTimeout(r, 1400));
-  setLoading('signup', false);
-  showSuccess('signupSuccess');
+setLoading('signup', true);
+    const { error } = await _supabase.auth.signUp({
+      email, password: pw,
+      options: { data: { name } }
+    });
+    setLoading('signup', false);
+
+    if (error) {
+      showError('signupEmail', error.message);
+      return;
+    }
+    showSuccess('signupSuccess');
 }
 </script>
 </body>
