@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brevia — 설정</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--paper:#f5f2eb;--accent:#1a472a;--accent-light:#2d6a4f;
+  --muted:#6b6b6b;--border:rgba(13,13,13,0.1);--white:#fff;
+  --danger:#c0392b;--danger-bg:rgba(192,57,43,0.06);
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Pretendard',-apple-system,sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;display:flex}
+
+/* SIDEBAR */
+nav{
+  width:220px;background:var(--white);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.nav-logo{font-family:var(--serif);font-size:20px;letter-spacing:-0.5px;padding:24px 20px 20px;border-bottom:1px solid var(--border);display:block;text-decoration:none;color:var(--ink)}
+.nav-logo em{color:var(--accent);font-style:italic}
+.nav-section{padding:16px 12px 8px;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;
+  border-radius:10px;font-size:13px;color:var(--muted);cursor:pointer;
+  border:none;background:transparent;width:calc(100% - 16px);text-align:left;
+  text-decoration:none;transition:all 0.15s;
+}
+.nav-item:hover{background:rgba(0,0,0,0.04);color:var(--ink)}
+.nav-item.active{background:rgba(26,71,42,0.1);color:var(--accent);font-weight:500}
+.nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;flex-shrink:0}
+.nav-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;transition:background 0.15s}
+.user-row:hover{background:rgba(0,0,0,0.04)}
+.avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;font-style:italic;flex-shrink:0}
+.user-name{font-size:13px;font-weight:500}
+.user-plan{font-size:11px;color:var(--accent);font-weight:500}
+
+/* MAIN */
+main{flex:1;overflow-y:auto;padding:40px 48px;max-width:800px}
+
+.page-title{font-family:var(--serif);font-size:30px;letter-spacing:-0.7px;margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--muted);font-weight:300;margin-bottom:36px}
+
+/* 설정 탭 */
+.settings-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:36px}
+.s-tab{
+  font-family:var(--sans);font-size:14px;font-weight:500;
+  padding:10px 0;margin-right:28px;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--muted);position:relative;transition:color 0.2s;
+}
+.s-tab.active{color:var(--ink)}
+.s-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--ink);border-radius:2px}
+
+/* 섹션 */
+.settings-section{margin-bottom:32px}
+.section-header{margin-bottom:16px}
+.section-label{font-size:13px;font-weight:600;letter-spacing:0.02em;color:var(--ink);margin-bottom:3px}
+.section-desc{font-size:12px;color:var(--muted);font-weight:300}
+
+/* 카드 */
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px}
+
+/* 설정 행 */
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);gap:16px;
+}
+.setting-row:last-child{border-bottom:none}
+.setting-left{flex:1;min-width:0}
+.setting-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.setting-desc{font-size:12px;color:var(--muted);font-weight:300;line-height:1.5}
+.setting-right{flex-shrink:0}
+
+/* 토글 스위치 */
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{
+  position:absolute;inset:0;border-radius:100px;
+  background:rgba(0,0,0,0.12);transition:background 0.2s;
+}
+.toggle input:checked ~ .toggle-track{background:var(--accent)}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:white;transition:transform 0.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(20px)}
+
+/* 인풋 */
+.setting-input{
+  font-family:var(--sans);font-size:13px;
+  padding:8px 12px;border:1px solid var(--border);border-radius:8px;
+  background:var(--paper);outline:none;color:var(--ink);
+  transition:border-color 0.2s;width:180px;
+}
+.setting-input:focus{border-color:var(--accent);background:white}
+
+/* 셀렉트 */
+.setting-select{
+  font-family:var(--sans);font-size:13px;
+  padding:8px 28px 8px 12px;border:1px solid var(--border);border-radius:8px;
+  background:var(--paper);outline:none;color:var(--ink);
+  cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color 0.2s;
+}
+.setting-select:focus{border-color:var(--accent)}
+
+/* 버튼들 */
+.btn{
+  font-family:var(--sans);font-size:13px;font-weight:500;
+  padding:8px 16px;border-radius:8px;border:none;cursor:pointer;
+  transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;
+}
+.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.btn-ink{background:var(--ink);color:white}
+.btn-ink:hover{background:var(--accent)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(192,57,43,0.15)}
+.btn-danger:hover{background:rgba(192,57,43,0.12)}
+
+/* 프로필 아바타 */
+.profile-avatar-wrap{display:flex;align-items:center;gap:16px;padding:20px;background:var(--white);border:1px solid var(--border);border-radius:16px;margin-bottom:16px}
+.profile-avatar-big{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--ink);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:26px;font-style:italic;flex-shrink:0;
+}
+.profile-avatar-info{}
+.profile-name-big{font-size:18px;font-weight:600;letter-spacing:-0.3px;margin-bottom:3px}
+.profile-email{font-size:13px;color:var(--muted);font-weight:300}
+
+/* 종목 관리 */
+.stock-manage-list{display:flex;flex-direction:column;gap:2px}
+.stock-manage-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 20px;border-bottom:1px solid var(--border);
+}
+.stock-manage-row:last-child{border-bottom:none}
+.stock-m-left{display:flex;align-items:center;gap:10px}
+.stock-m-icon{width:32px;height:32px;border-radius:8px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.stock-m-name{font-size:14px;font-weight:500}
+.stock-m-full{font-size:11px;color:var(--muted)}
+.stock-del{background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:6px;transition:all 0.15s;display:flex}
+.stock-del:hover{color:var(--danger);background:var(--danger-bg)}
+.stock-del svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.add-stock-row{
+  display:flex;gap:8px;padding:16px 20px;border-top:1px solid var(--border);
+}
+.add-stock-input{
+  flex:1;font-family:var(--sans);font-size:13px;
+  padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+  background:var(--paper);outline:none;color:var(--ink);
+  transition:border-color 0.2s;
+}
+.add-stock-input:focus{border-color:var(--accent);background:white}
+
+/* 플랜 카드 */
+.plan-current{
+  background:var(--white);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin-bottom:16px;
+}
+.plan-current-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.plan-badge-big{
+  font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--accent);background:rgba(26,71,42,0.1);
+  padding:4px 10px;border-radius:100px;
+}
+.plan-current-name{font-family:var(--serif);font-size:22px;letter-spacing:-0.4px;margin-bottom:4px}
+.plan-current-price{font-size:14px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.plan-features-list{display:flex;flex-wrap:wrap;gap:6px}
+.plan-feat{font-size:12px;color:var(--muted);background:var(--paper);padding:4px 10px;border-radius:100px;border:1px solid var(--border)}
+
+/* 위험 구역 */
+.danger-zone{background:var(--danger-bg);border:1px solid rgba(192,57,43,0.15);border-radius:16px;overflow:hidden}
+.danger-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(192,57,43,0.1);gap:16px}
+.danger-row:last-child{border-bottom:none}
+.danger-name{font-size:14px;font-weight:500;color:var(--danger);margin-bottom:2px}
+.danger-desc{font-size:12px;color:var(--muted);font-weight:300}
+
+/* 저장 토스트 */
+.toast{
+  position:fixed;bottom:28px;right:28px;
+  background:var(--ink);color:white;
+  font-size:13px;font-weight:500;
+  padding:12px 20px;border-radius:12px;
+  display:none;align-items:center;gap:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  animation:slideUp 0.3s ease;z-index:999;
+}
+.toast.show{display:flex}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 탭 패널 */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+@media(max-width:900px){
+  nav{display:none}
+  main{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<nav>
+  <a href="brevia-dashboard.html" class="nav-logo">Brev<em>ia</em></a>
+  <div class="nav-section">메인</div>
+  <a class="nav-item" href="brevia-dashboard.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    대시보드
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    AI 비서
+  </a>
+  <div class="nav-section">계정</div>
+  <a class="nav-item active" href="#">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    설정
+  </a>
+  <div class="nav-bottom">
+    <div class="user-row" onclick="window.location.href='brevia-landing.html'">
+      <div class="avatar-circle">영</div>
+      <div>
+        <div class="user-name">영님</div>
+        <div class="user-plan">Pro 플랜</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 메인 -->
+<main>
+  <h1 class="page-title">설정</h1>
+  <p class="page-sub">계정, 알림, 구독을 관리하세요</p>
+
+  <!-- 탭 -->
+  <div class="settings-tabs">
+    <button class="s-tab active" onclick="switchTab('profile', this)">프로필</button>
+    <button class="s-tab" onclick="switchTab('notifications', this)">알림</button>
+    <button class="s-tab" onclick="switchTab('stocks', this)">관심 종목</button>
+    <button class="s-tab" onclick="switchTab('subscription', this)">구독</button>
+    <button class="s-tab" onclick="switchTab('danger', this)">계정</button>
+  </div>
+
+  <!-- 프로필 탭 -->
+  <div class="tab-panel active" id="tab-profile">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar-big">영</div>
+      <div class="profile-avatar-info">
+        <div class="profile-name-big">영님</div>
+        <div class="profile-email">young@email.com</div>
+      </div>
+      <button class="btn btn-ghost" style="margin-left:auto">사진 변경</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">기본 정보</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">이름</div>
+          </div>
+          <div class="setting-right">
+            <input class="setting-input" type="text" value="영" id="profileName">
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">이메일</div>
+          </div>
+          <div class="setting-right">
+            <input class="setting-input" type="email" value="young@email.com" id="profileEmail">
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">언어</div>
+          </div>
+          <div class="setting-right">
+            <select class="setting-select">
+              <option selected>한국어</option>
+              <option>English</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">시간대</div>
+          </div>
+          <div class="setting-right">
+            <select class="setting-select">
+              <option selected>Asia/Seoul (KST)</option>
+              <option>America/New_York (EST)</option>
+              <option>America/Los_Angeles (PST)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">비밀번호 변경</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left"><div class="setting-name">현재 비밀번호</div></div>
+          <div class="setting-right"><input class="setting-input" type="password" placeholder="••••••••"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left"><div class="setting-name">새 비밀번호</div></div>
+          <div class="setting-right"><input class="setting-input" type="password" placeholder="8자 이상"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left"><div class="setting-name">비밀번호 확인</div></div>
+          <div class="setting-right"><input class="setting-input" type="password" placeholder="동일하게 입력"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn btn-ghost">취소</button>
+      <button class="btn btn-ink" onclick="showToast('프로필이 저장됐어요 ✓')">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        저장하기
+      </button>
+    </div>
+  </div>
+
+  <!-- 알림 탭 -->
+  <div class="tab-panel" id="tab-notifications">
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">이메일 알림</div>
+        <div class="section-desc">Brevia가 이메일로 보내는 알림을 관리하세요</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">오늘의 브리핑</div>
+            <div class="setting-desc">매일 오전 8시, 시장 요약과 관심 종목 현황</div>
+          </div>
+          <div class="setting-right">
+            <label class="toggle">
+              <input type="checkbox" checked onchange="showToast('알림 설정이 저장됐어요 ✓')">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">실적 발표 알림</div>
+            <div class="setting-desc">관심 종목 실적 발표 D-1 사전 알림</div>
+          </div>
+          <div class="setting-right">
+            <label class="toggle">
+              <input type="checkbox" checked onchange="showToast('알림 설정이 저장됐어요 ✓')">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">주요 뉴스 속보</div>
+            <div class="setting-desc">관심 종목 관련 중요 뉴스 발생 시</div>
+          </div>
+          <div class="setting-right">
+            <label class="toggle">
+              <input type="checkbox" onchange="showToast('알림 설정이 저장됐어요 ✓')">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">주간 리포트</div>
+            <div class="setting-desc">매주 월요일, 지난 주 포트폴리오 요약</div>
+          </div>
+          <div class="setting-right">
+            <label class="toggle">
+              <input type="checkbox" checked onchange="showToast('알림 설정이 저장됐어요 ✓')">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">브리핑 시간 설정</div>
+        <div class="section-desc">오늘의 브리핑을 받을 시간을 설정하세요</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">브리핑 수신 시간</div>
+            <div class="setting-desc">한국 시간 기준</div>
+          </div>
+          <div class="setting-right">
+            <select class="setting-select" onchange="showToast('저장됐어요 ✓')">
+              <option>오전 7:00</option>
+              <option selected>오전 8:00</option>
+              <option>오전 9:00</option>
+              <option>오전 6:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">주말 브리핑</div>
+            <div class="setting-desc">토·일요일에도 브리핑 수신</div>
+          </div>
+          <div class="setting-right">
+            <label class="toggle">
+              <input type="checkbox" onchange="showToast('저장됐어요 ✓')">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관심 종목 탭 -->
+  <div class="tab-panel" id="tab-stocks">
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">관심 종목 관리</div>
+        <div class="section-desc">최대 20개 (Pro 플랜) · 현재 5개 등록됨</div>
+      </div>
+      <div class="card">
+        <div class="stock-manage-list" id="stockManageList">
+          <div class="stock-manage-row">
+            <div class="stock-m-left">
+              <div class="stock-m-icon">NV</div>
+              <div><div class="stock-m-name">NVDA</div><div class="stock-m-full">NVIDIA Corporation</div></div>
+            </div>
+            <button class="stock-del" onclick="removeStock(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+          </div>
+          <div class="stock-manage-row">
+            <div class="stock-m-left">
+              <div class="stock-m-icon">IQ</div>
+              <div><div class="stock-m-name">IONQ</div><div class="stock-m-full">IonQ Inc</div></div>
+            </div>
+            <button class="stock-del" onclick="removeStock(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+          </div>
+          <div class="stock-manage-row">
+            <div class="stock-m-left">
+              <div class="stock-m-icon">AP</div>
+              <div><div class="stock-m-name">APLD</div><div class="stock-m-full">Applied Digital Corp</div></div>
+            </div>
+            <button class="stock-del" onclick="removeStock(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+          </div>
+          <div class="stock-manage-row">
+            <div class="stock-m-left">
+              <div class="stock-m-icon">QB</div>
+              <div><div class="stock-m-name">QBTS</div><div class="stock-m-full">D-Wave Quantum Inc</div></div>
+            </div>
+            <button class="stock-del" onclick="removeStock(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+          </div>
+          <div class="stock-manage-row">
+            <div class="stock-m-left">
+              <div class="stock-m-icon">MU</div>
+              <div><div class="stock-m-name">MU</div><div class="stock-m-full">Micron Technology</div></div>
+            </div>
+            <button class="stock-del" onclick="removeStock(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+          </div>
+        </div>
+        <div class="add-stock-row">
+          <input class="add-stock-input" id="newStockInput" placeholder="티커 입력 (예: AAPL)" onkeydown="if(event.key==='Enter')addStock()">
+          <button class="btn btn-ink" onclick="addStock()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            추가
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 구독 탭 -->
+  <div class="tab-panel" id="tab-subscription">
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">현재 플랜</div>
+      </div>
+      <div class="plan-current">
+        <div class="plan-current-header">
+          <div>
+            <div class="plan-current-name">Brevia Pro</div>
+            <div class="plan-current-price">₩9,900 / 월 · 다음 결제일 2026년 7월 7일</div>
+          </div>
+          <span class="plan-badge-big">활성</span>
+        </div>
+        <div class="plan-features-list">
+          <span class="plan-feat">무제한 AI</span>
+          <span class="plan-feat">업무+투자 전체</span>
+          <span class="plan-feat">종목 20개</span>
+          <span class="plan-feat">일일 브리핑</span>
+          <span class="plan-feat">SEC 요약</span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <a href="brevia-payment.html" class="btn btn-ink" style="text-decoration:none;color:white">플랜 변경</a>
+          <button class="btn btn-ghost">결제 내역</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">결제 수단</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">신용카드</div>
+            <div class="setting-desc">•••• •••• •••• 4242 · 만료 12/27</div>
+          </div>
+          <div class="setting-right" style="display:flex;gap:8px">
+            <button class="btn btn-ghost">변경</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">청구 정보</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left"><div class="setting-name">청구서 이메일</div></div>
+          <div class="setting-right"><input class="setting-input" type="email" value="young@email.com"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left"><div class="setting-name">사업자 등록번호</div><div class="setting-desc">세금계산서 발행용 (선택)</div></div>
+          <div class="setting-right"><input class="setting-input" type="text" placeholder="000-00-00000"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="btn btn-ink" onclick="showToast('청구 정보가 저장됐어요 ✓')">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 계정/위험 탭 -->
+  <div class="tab-panel" id="tab-danger">
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">계정 관리</div>
+      </div>
+      <div class="card">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">데이터 내보내기</div>
+            <div class="setting-desc">모든 대화 기록과 설정을 JSON으로 다운로드</div>
+          </div>
+          <div class="setting-right">
+            <button class="btn btn-ghost" onclick="showToast('다운로드가 시작됐어요 ✓')">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              내보내기
+            </button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-name">로그아웃</div>
+            <div class="setting-desc">모든 기기에서 로그아웃</div>
+          </div>
+          <div class="setting-right">
+            <button class="btn btn-ghost" onclick="window.location.href='brevia-landing.html'">로그아웃</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-label">위험 구역</div>
+        <div class="section-desc">아래 작업은 되돌릴 수 없습니다</div>
+      </div>
+      <div class="danger-zone">
+        <div class="danger-row">
+          <div class="setting-left">
+            <div class="danger-name">구독 취소</div>
+            <div class="danger-desc">현재 기간 만료 후 Free 플랜으로 전환됩니다</div>
+          </div>
+          <button class="btn btn-danger" onclick="confirmCancel()">구독 취소</button>
+        </div>
+        <div class="danger-row">
+          <div class="setting-left">
+            <div class="danger-name">계정 삭제</div>
+            <div class="danger-desc">모든 데이터와 대화 기록이 영구 삭제됩니다</div>
+          </div>
+          <button class="btn btn-danger" onclick="confirmDelete()">계정 삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- 토스트 -->
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function removeStock(btn) {
+  const row = btn.closest('.stock-manage-row');
+  row.style.opacity = '0';
+  row.style.transform = 'translateX(10px)';
+  row.style.transition = 'all 0.2s';
+  setTimeout(() => { row.remove(); showToast('종목이 삭제됐어요'); }, 200);
+}
+
+function addStock() {
+  const input = document.getElementById('newStockInput');
+  const ticker = input.value.trim().toUpperCase();
+  if (!ticker) return;
+  const list = document.getElementById('stockManageList');
+  const row = document.createElement('div');
+  row.className = 'stock-manage-row';
+  row.style.animation = 'slideUp 0.3s ease';
+  row.innerHTML = `
+    <div class="stock-m-left">
+      <div class="stock-m-icon">${ticker.slice(0,2)}</div>
+      <div><div class="stock-m-name">${ticker}</div><div class="stock-m-full">추가됨</div></div>
+    </div>
+    <button class="stock-del" onclick="removeStock(this)">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    </button>`;
+  list.appendChild(row);
+  input.value = '';
+  showToast(`${ticker} 추가됐어요 ✓`);
+}
+
+function confirmCancel() {
+  if (confirm('구독을 취소하면 이번 기간 만료 후 Free 플랜으로 전환됩니다.\n계속하시겠어요?')) {
+    showToast('구독 취소가 접수됐어요');
+  }
+}
+
+function confirmDelete() {
+  if (confirm('⚠️ 계정을 삭제하면 모든 데이터가 영구 삭제됩니다.\n정말로 삭제하시겠어요?')) {
+    window.location.href = 'brevia-landing.html';
+  }
+}
+</script>
+</body>
+</html>

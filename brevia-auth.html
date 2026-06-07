@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brevia — 로그인</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--paper:#f5f2eb;--accent:#1a472a;--accent-light:#2d6a4f;
+  --muted:#6b6b6b;--border:rgba(13,13,13,0.1);--white:#fff;
+  --danger:#c0392b;--danger-bg:rgba(192,57,43,0.06);
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Pretendard',-apple-system,sans-serif;
+}
+
+body{
+  font-family:var(--sans);background:var(--paper);color:var(--ink);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* 배경 장식 */
+body::before{
+  content:'';position:absolute;top:-200px;right:-200px;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(26,71,42,0.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+body::after{
+  content:'';position:absolute;bottom:-150px;left:-150px;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(26,71,42,0.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* 레이아웃 */
+.container{
+  display:grid;grid-template-columns:1fr 1fr;
+  width:900px;min-height:580px;
+  background:var(--white);border-radius:24px;
+  border:1px solid var(--border);
+  box-shadow:0 40px 100px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);
+  overflow:hidden;position:relative;z-index:1;
+}
+
+/* 왼쪽 브랜드 패널 */
+.brand-panel{
+  background:var(--ink);
+  padding:52px 48px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+
+.brand-panel::before{
+  content:'Brevia';
+  font-family:var(--serif);font-size:200px;font-style:italic;
+  position:absolute;bottom:-40px;left:-20px;
+  opacity:0.04;color:white;white-space:nowrap;
+  pointer-events:none;
+}
+
+.brand-top{}
+
+.logo{
+  font-family:var(--serif);font-size:26px;letter-spacing:-0.5px;color:white;
+  margin-bottom:48px;display:block;
+}
+.logo em{color:rgba(45,106,79,0.9);font-style:italic}
+
+.brand-headline{
+  font-family:var(--serif);font-size:36px;line-height:1.1;
+  letter-spacing:-0.8px;color:white;margin-bottom:16px;
+}
+.brand-headline em{font-style:italic;color:rgba(255,255,255,0.5)}
+
+.brand-desc{
+  font-size:14px;line-height:1.7;color:rgba(255,255,255,0.4);font-weight:300;
+}
+
+.feature-list{
+  display:flex;flex-direction:column;gap:12px;
+}
+
+.feature-row{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;
+}
+
+.feature-row::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:rgba(45,106,79,0.8);flex-shrink:0;
+}
+
+/* 오른쪽 폼 패널 */
+.form-panel{
+  padding:52px 48px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+
+/* 탭 */
+.auth-tabs{
+  display:flex;gap:0;margin-bottom:36px;
+  border-bottom:1px solid var(--border);
+}
+
+.auth-tab{
+  font-family:var(--sans);font-size:14px;font-weight:500;
+  padding:10px 0;margin-right:28px;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--muted);position:relative;transition:color 0.2s;
+}
+.auth-tab.active{color:var(--ink)}
+.auth-tab.active::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:2px;background:var(--ink);border-radius:2px;
+}
+
+/* 폼 */
+.form-title{
+  font-family:var(--serif);font-size:28px;letter-spacing:-0.5px;
+  margin-bottom:6px;
+}
+.form-subtitle{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:32px}
+
+.field{margin-bottom:16px}
+.field label{
+  display:block;font-size:12px;font-weight:500;
+  letter-spacing:0.04em;color:var(--muted);
+  margin-bottom:7px;text-transform:uppercase;
+}
+
+.field input{
+  width:100%;font-family:var(--sans);font-size:14px;
+  padding:12px 16px;border:1px solid var(--border);
+  border-radius:12px;background:var(--paper);
+  color:var(--ink);outline:none;transition:all 0.2s;
+}
+.field input:focus{border-color:var(--accent);background:white}
+.field input::placeholder{color:#bbb}
+.field input.error{border-color:var(--danger);background:var(--danger-bg)}
+
+.error-msg{
+  font-size:12px;color:var(--danger);margin-top:5px;
+  display:none;
+}
+.error-msg.show{display:block}
+
+/* 비밀번호 토글 */
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:42px}
+.pw-toggle{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);padding:2px;
+  display:flex;align-items:center;
+}
+.pw-toggle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5}
+
+/* 기억하기 / 비번 찾기 */
+.form-options{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;margin-top:4px;
+}
+.remember{display:flex;align-items:center;gap:7px;cursor:pointer}
+.remember input{
+  width:15px;height:15px;accent-color:var(--accent);cursor:pointer;
+}
+.remember span{font-size:13px;color:var(--muted)}
+.forgot{font-size:13px;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.forgot:hover{color:var(--accent)}
+
+/* 버튼 */
+.btn-submit{
+  width:100%;font-family:var(--sans);font-size:15px;font-weight:500;
+  padding:14px;border-radius:12px;border:none;
+  background:var(--ink);color:white;cursor:pointer;
+  transition:all 0.25s;letter-spacing:-0.2px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-submit:hover{background:var(--accent);transform:translateY(-1px)}
+.btn-submit:active{transform:translateY(0)}
+.btn-submit:disabled{background:#ccc;cursor:not-allowed;transform:none}
+
+/* 구분선 */
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:20px 0;color:var(--muted);font-size:12px;
+}
+.divider::before,.divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* 소셜 로그인 */
+.social-btn{
+  width:100%;font-family:var(--sans);font-size:14px;font-weight:400;
+  padding:12px;border-radius:12px;
+  border:1px solid var(--border);background:white;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  color:var(--ink);margin-bottom:10px;
+}
+.social-btn:hover{border-color:var(--muted);background:var(--paper)}
+.social-btn svg{width:18px;height:18px;flex-shrink:0}
+
+/* 약관 */
+.terms{font-size:11px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.6}
+.terms a{color:var(--accent);text-decoration:none}
+
+/* 로딩 스피너 */
+.spinner{
+  width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:white;border-radius:50%;
+  animation:spin 0.7s linear infinite;display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 성공 상태 */
+.success-state{
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:16px;padding:40px 0;
+}
+.success-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(26,71,42,0.1);
+  display:flex;align-items:center;justify-content:center;
+}
+.success-icon svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:2}
+.success-title{font-family:var(--serif);font-size:24px}
+.success-desc{font-size:14px;color:var(--muted);font-weight:300}
+.success-cta{
+  font-size:14px;font-weight:500;color:var(--accent);
+  text-decoration:none;display:inline-flex;align-items:center;gap:4px;
+  transition:gap 0.2s;cursor:pointer;border:none;background:none;
+}
+.success-cta:hover{gap:8px}
+
+/* 반응형 */
+@media(max-width:700px){
+  .container{grid-template-columns:1fr;width:95vw}
+  .brand-panel{display:none}
+  .form-panel{padding:36px 28px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 브랜드 패널 -->
+  <div class="brand-panel">
+    <div class="brand-top">
+      <a href="brevia-landing.html" style="text-decoration:none"><span class="logo">Brev<em>ia</em></span></a>
+      <h2 class="brand-headline">하루를<br><em>10분으로</em><br>압축하세요</h2>
+    </div>
+    <div class="feature-list">
+      <div class="feature-row">회의록 → 보고서 자동 변환</div>
+      <div class="feature-row">해외주식 실적 한국어 요약</div>
+      <div class="feature-row">오늘의 시장 브리핑</div>
+      <div class="feature-row">이메일 · 보고서 초안 생성</div>
+    </div>
+  </div>
+
+  <!-- 폼 패널 -->
+  <div class="form-panel">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">로그인</button>
+      <button class="auth-tab" onclick="switchTab('signup')">회원가입</button>
+    </div>
+
+    <!-- 로그인 폼 -->
+    <div id="loginForm">
+      <h1 class="form-title">돌아오셨군요</h1>
+      <p class="form-subtitle">Brevia 계정으로 로그인하세요</p>
+
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="loginEmail" placeholder="hello@brevia.kr" oninput="clearError('loginEmail')">
+        <div class="error-msg" id="loginEmailErr">올바른 이메일 주소를 입력해주세요</div>
+      </div>
+
+      <div class="field">
+        <label>비밀번호</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPw" placeholder="••••••••" oninput="clearError('loginPw')" onkeydown="if(event.key==='Enter')doLogin()">
+          <button class="pw-toggle" onclick="togglePw('loginPw', this)" tabindex="-1">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="error-msg" id="loginPwErr">비밀번호를 입력해주세요</div>
+      </div>
+
+      <div class="form-options">
+        <label class="remember">
+          <input type="checkbox" id="rememberMe">
+          <span>로그인 유지</span>
+        </label>
+        <a href="#" class="forgot">비밀번호 찾기</a>
+      </div>
+
+      <button class="btn-submit" id="loginBtn" onclick="doLogin()">
+        <span id="loginBtnText">로그인</span>
+        <div class="spinner" id="loginSpinner"></div>
+      </button>
+
+      <div class="divider">또는</div>
+
+      <button class="social-btn" onclick="socialLogin('google')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google로 계속하기
+      </button>
+
+      <button class="social-btn" onclick="socialLogin('kakao')">
+        <svg viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4c-.1.3.3.6.5.4l4.7-3.1c.5.1 1 .1 1.6.1 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+        카카오로 계속하기
+      </button>
+
+      <div class="success-state" id="loginSuccess">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">로그인 성공!</div>
+        <div class="success-desc">Brevia로 연결 중...</div>
+        <button class="success-cta" onclick="goToApp()">앱으로 이동 →</button>
+      </div>
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <div id="signupForm" style="display:none">
+      <h1 class="form-title">시작해볼까요</h1>
+      <p class="form-subtitle">14일 무료 체험 · 신용카드 불필요</p>
+
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="signupName" placeholder="홍길동" oninput="clearError('signupName')">
+        <div class="error-msg" id="signupNameErr">이름을 입력해주세요</div>
+      </div>
+
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="signupEmail" placeholder="hello@brevia.kr" oninput="clearError('signupEmail')">
+        <div class="error-msg" id="signupEmailErr">올바른 이메일 주소를 입력해주세요</div>
+      </div>
+
+      <div class="field">
+        <label>비밀번호</label>
+        <div class="pw-wrap">
+          <input type="password" id="signupPw" placeholder="8자 이상" oninput="checkPwStrength(this.value);clearError('signupPw')">
+          <button class="pw-toggle" onclick="togglePw('signupPw', this)" tabindex="-1">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="error-msg" id="signupPwErr">비밀번호는 8자 이상이어야 해요</div>
+        <div id="pwStrength" style="display:flex;gap:4px;margin-top:6px"></div>
+      </div>
+
+      <button class="btn-submit" id="signupBtn" onclick="doSignup()" style="margin-top:8px">
+        <span id="signupBtnText">무료로 시작하기</span>
+        <div class="spinner" id="signupSpinner"></div>
+      </button>
+
+      <div class="divider">또는</div>
+
+      <button class="social-btn" onclick="socialLogin('google')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google로 계속하기
+      </button>
+
+      <div class="success-state" id="signupSuccess">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">가입 완료!</div>
+        <div class="success-desc">확인 이메일을 발송했어요.<br>이메일을 확인해주세요.</div>
+        <button class="success-cta" onclick="goToApp()">앱 바로 시작하기 →</button>
+      </div>
+
+      <p class="terms">가입하면 Brevia의 <a href="#">이용약관</a>과 <a href="#">개인정보처리방침</a>에 동의하게 됩니다</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeTab = 'login';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
+  });
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+}
+
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  btn.innerHTML = isText
+    ? `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+    : `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+}
+
+function clearError(id) {
+  const input = document.getElementById(id);
+  if (input) input.classList.remove('error');
+  const err = document.getElementById(id + 'Err');
+  if (err) err.classList.remove('show');
+}
+
+function showError(id, msg) {
+  const input = document.getElementById(id);
+  if (input) input.classList.add('error');
+  const err = document.getElementById(id + 'Err');
+  if (err) { if (msg) err.textContent = msg; err.classList.add('show'); }
+  return false;
+}
+
+function checkPwStrength(pw) {
+  const bar = document.getElementById('pwStrength');
+  if (!pw) { bar.innerHTML = ''; return; }
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71'];
+  const labels = ['매우 약함','약함','보통','강함'];
+  bar.innerHTML = [1,2,3,4].map(i =>
+    `<div style="flex:1;height:3px;border-radius:2px;background:${i <= score ? colors[score-1] : 'var(--border)'}"></div>`
+  ).join('') + (score > 0 ? `<span style="font-size:11px;color:var(--muted);margin-left:6px">${labels[score-1]}</span>` : '');
+}
+
+function setLoading(prefix, on) {
+  const btn = document.getElementById(prefix + 'Btn');
+  const txt = document.getElementById(prefix + 'BtnText');
+  const spin = document.getElementById(prefix + 'Spinner');
+  btn.disabled = on;
+  txt.style.opacity = on ? '0' : '1';
+  spin.style.display = on ? 'block' : 'none';
+}
+
+function showSuccess(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function goToApp() {
+  window.location.href = 'brevia-dashboard.html';
+}
+
+function socialLogin(provider) {
+  // 실제 연동 시 Supabase OAuth 사용
+  alert(`${provider} 로그인은 Supabase 연동 후 활성화됩니다`);
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  let valid = true;
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    valid = showError('loginEmail');
+  }
+  if (!pw) {
+    valid = showError('loginPw');
+  }
+  if (!valid) return;
+
+  setLoading('login', true);
+  // 실제 연동 시 Supabase auth.signIn 사용
+  await new Promise(r => setTimeout(r, 1200));
+  setLoading('login', false);
+  document.getElementById('loginForm').querySelector('.auth-tabs').style.opacity = '0.3';
+  showSuccess('loginSuccess');
+}
+
+async function doSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pw = document.getElementById('signupPw').value;
+  let valid = true;
+
+  if (!name) valid = showError('signupName', '이름을 입력해주세요');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) valid = showError('signupEmail');
+  if (!pw || pw.length < 8) valid = showError('signupPw');
+  if (!valid) return;
+
+  setLoading('signup', true);
+  await new Promise(r => setTimeout(r, 1400));
+  setLoading('signup', false);
+  showSuccess('signupSuccess');
+}
+</script>
+</body>
+</html>
