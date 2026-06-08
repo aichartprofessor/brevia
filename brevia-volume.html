@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brevia — 급등 신호</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--paper:#f5f2eb;--accent:#1a472a;--accent-light:#2d6a4f;
+  --muted:#6b6b6b;--border:rgba(13,13,13,0.1);--white:#fff;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Pretendard',-apple-system,sans-serif;
+  --up:#1a7a3a;--up-bg:rgba(26,122,58,0.08);
+  --down:#b02020;--down-bg:rgba(176,32,32,0.07);
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;display:flex}
+
+/* SIDEBAR */
+nav{width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.nav-logo{font-family:var(--serif);font-size:20px;letter-spacing:-0.5px;padding:24px 20px 20px;border-bottom:1px solid var(--border);display:block;text-decoration:none;color:var(--ink)}
+.nav-logo em{color:var(--accent);font-style:italic}
+.nav-section{padding:16px 12px 8px;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:10px;font-size:13px;color:var(--muted);cursor:pointer;border:none;background:transparent;width:calc(100% - 16px);text-align:left;text-decoration:none;transition:all 0.15s}
+.nav-item:hover{background:rgba(0,0,0,0.04);color:var(--ink)}
+.nav-item.active{background:rgba(26,71,42,0.1);color:var(--accent);font-weight:500}
+.nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;flex-shrink:0}
+.nav-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;transition:background 0.15s}
+.user-row:hover{background:rgba(0,0,0,0.04)}
+.avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;font-style:italic;flex-shrink:0}
+.user-name{font-size:13px;font-weight:500}
+.user-plan{font-size:11px;color:var(--accent);font-weight:500}
+
+/* MAIN */
+main{flex:1;overflow-y:auto;padding:36px 40px}
+
+/* 헤더 */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.page-title{font-family:var(--serif);font-size:30px;letter-spacing:-0.7px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--muted);font-weight:300}
+.header-right{display:flex;align-items:center;gap:10px}
+
+/* 시장 토글 */
+.market-toggle{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:100px;padding:3px}
+.market-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:6px 14px;border-radius:100px;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.2s;display:flex;align-items:center;gap:5px}
+.market-btn.active{background:var(--ink);color:white}
+
+/* 필터 탭 */
+.filter-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.filter-tab{font-family:var(--sans);font-size:12px;font-weight:500;padding:6px 14px;border-radius:100px;border:1px solid var(--border);background:var(--white);cursor:pointer;color:var(--muted);transition:all 0.2s}
+.filter-tab:hover{border-color:var(--muted)}
+.filter-tab.active{background:var(--ink);color:white;border-color:var(--ink)}
+
+/* 그리드 */
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* 카드 */
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px;overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title-wrap{}
+.card-title{font-size:14px;font-weight:600;letter-spacing:-0.2px;margin-bottom:2px}
+.card-subtitle{font-size:11px;color:var(--muted);font-weight:300}
+.update-badge{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.update-dot{width:5px;height:5px;border-radius:50%;background:var(--up);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* 거래량 바 */
+.volume-list{display:flex;flex-direction:column;gap:10px}
+.volume-item{cursor:pointer;transition:opacity 0.15s}
+.volume-item:hover{opacity:0.8}
+.volume-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.volume-rank{font-size:10px;font-weight:700;color:var(--muted);min-width:18px}
+.volume-name{font-size:13px;font-weight:500;flex:1;margin:0 8px}
+.volume-price{font-size:12px;font-weight:500}
+.volume-change{font-size:11px;padding:2px 6px;border-radius:100px}
+.vol-up{color:var(--up);background:var(--up-bg)}
+.vol-down{color:var(--down);background:var(--down-bg)}
+.volume-bar-wrap{display:flex;align-items:center;gap:8px}
+.volume-bar-bg{flex:1;height:6px;background:var(--paper);border-radius:100px;overflow:hidden}
+.volume-bar-fill{height:100%;border-radius:100px;transition:width 1s ease}
+.volume-bar-fill.up{background:var(--up)}
+.volume-bar-fill.down{background:var(--down)}
+.volume-bar-fill.hot{background:#e67e22}
+.volume-label{font-size:10px;font-weight:600;min-width:52px;text-align:right}
+.volume-label.up{color:var(--up)}
+.volume-label.down{color:var(--down)}
+.volume-label.hot{color:#e67e22}
+
+/* 매수/매도 강도 */
+.flow-list{display:flex;flex-direction:column;gap:8px}
+.flow-item{padding:11px 12px;border-radius:10px;background:var(--paper);cursor:pointer;transition:all 0.15s}
+.flow-item:hover{transform:translateX(2px)}
+.flow-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.flow-name{font-size:13px;font-weight:500}
+.flow-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px}
+.flow-badge.strong-buy{background:rgba(26,122,58,0.15);color:var(--up)}
+.flow-badge.buy{background:rgba(26,122,58,0.08);color:var(--up)}
+.flow-badge.sell{background:rgba(176,32,32,0.08);color:var(--down)}
+.flow-badge.strong-sell{background:rgba(176,32,32,0.15);color:var(--down)}
+.flow-bar-wrap{display:flex;align-items:center;gap:0;border-radius:100px;overflow:hidden;height:6px}
+.flow-bar-buy{background:var(--up);transition:width 1s ease}
+.flow-bar-sell{background:var(--down);transition:width 1s ease}
+.flow-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--muted)}
+
+/* 히트맵 */
+.heatmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.heatmap-cell{border-radius:10px;padding:10px 8px;cursor:pointer;transition:transform 0.15s;text-align:center}
+.heatmap-cell:hover{transform:scale(1.03)}
+.heatmap-ticker{font-size:11px;font-weight:600;margin-bottom:2px}
+.heatmap-pct{font-size:13px;font-weight:600}
+.heatmap-vol{font-size:9px;opacity:0.7;margin-top:1px}
+/* 히트맵 색상 */
+.h-hot{background:#c0392b;color:white}
+.h-up3{background:#1a7a3a;color:white}
+.h-up2{background:#2d9e54;color:white}
+.h-up1{background:#52c47a;color:white}
+.h-neu{background:rgba(0,0,0,0.06);color:var(--ink)}
+.h-dn1{background:#e8a0a0;color:#6b0000}
+.h-dn2{background:#d05050;color:white}
+.h-dn3{background:#b02020;color:white}
+
+/* AI 분석 패널 */
+.ai-panel{background:var(--ink);color:white;border-radius:16px;padding:22px;margin-bottom:16px}
+.ai-panel-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ai-avatar{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;font-style:italic;color:white}
+.ai-title{font-size:13px;font-weight:500}
+.ai-time{font-size:11px;opacity:0.4;margin-left:auto}
+.ai-content{font-size:13px;line-height:1.7;opacity:0.85;font-weight:300;margin-bottom:14px}
+.ai-highlights{display:flex;flex-wrap:wrap;gap:6px}
+.ai-highlight{font-size:11px;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7)}
+.ai-highlight.hot{background:rgba(255,100,50,0.2);color:#ffb699}
+.ai-highlight.up{background:rgba(40,200,100,0.15);color:#7fd99f}
+
+/* 버튼 */
+.btn-sm{font-family:var(--sans);font-size:12px;font-weight:500;padding:7px 14px;border-radius:100px;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px}
+.btn-ink{background:var(--ink);color:white}
+.btn-ink:hover{background:var(--accent)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--muted)}
+
+/* 애니메이션 */
+.fade-in{opacity:0;transform:translateY(10px);animation:fadeIn 0.4s ease forwards}
+@keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+.delay-1{animation-delay:0.05s}.delay-2{animation-delay:0.1s}.delay-3{animation-delay:0.15s}
+
+@media(max-width:900px){
+  nav{display:none}
+  main{padding:24px 20px}
+  .signal-grid{grid-template-columns:1fr}
+  .heatmap-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<nav>
+  <a href="brevia-dashboard.html" class="nav-logo">Brev<em>ia</em></a>
+  <div class="nav-section">메인</div>
+  <a class="nav-item" href="brevia-dashboard.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    대시보드
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    AI 비서
+  </a>
+  <div class="nav-section">투자</div>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    종목 분석
+  </a>
+  <a class="nav-item active" href="#">
+    <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    급등 신호
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    실적 캘린더
+  </a>
+  <a class="nav-item" href="brevia-app.html">
+    <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+    뉴스 브리핑
+  </a>
+  <div class="nav-section">계정</div>
+  <a class="nav-item" href="brevia-settings.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    설정
+  </a>
+  <div class="nav-bottom">
+    <div class="user-row" onclick="window.location.href='brevia-landing.html'">
+      <div class="avatar-circle">영</div>
+      <div>
+        <div class="user-name">영님</div>
+        <div class="user-plan">Pro 플랜</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 메인 -->
+<main>
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">급등 신호 <span style="font-style:italic;color:var(--accent)">Scanner</span></h1>
+      <p class="page-sub">거래량 급증 · 매수 강도 · 섹터 히트맵 실시간 모니터링</p>
+    </div>
+    <div class="header-right">
+      <div class="market-toggle">
+        <button class="market-btn active" onclick="switchMarket('us', this)">🇺🇸 미국</button>
+        <button class="market-btn" onclick="switchMarket('kr', this)">🇰🇷 한국</button>
+      </div>
+      <button class="btn-sm btn-ink" onclick="refreshData()">
+        <svg width="12" height="12" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        새로고침
+      </button>
+    </div>
+  </div>
+
+  <!-- 필터 탭 -->
+  <div class="filter-tabs fade-in delay-1">
+    <button class="filter-tab active" onclick="setFilter('all', this)">전체</button>
+    <button class="filter-tab" onclick="setFilter('volume', this)">거래량 급증</button>
+    <button class="filter-tab" onclick="setFilter('buy', this)">매수 급증</button>
+    <button class="filter-tab" onclick="setFilter('foreign', this)">외국인 순매수</button>
+    <button class="filter-tab" onclick="setFilter('institution', this)">기관 순매수</button>
+  </div>
+
+  <!-- AI 오늘의 분석 -->
+  <div class="ai-panel fade-in delay-1">
+    <div class="ai-panel-header">
+      <div class="ai-avatar">B</div>
+      <span class="ai-title">Brevia AI 시장 분석</span>
+      <span class="ai-time" id="analysisTime"></span>
+    </div>
+    <div class="ai-content" id="aiContent">
+      오늘 미국 시장에서 <strong>양자 컴퓨팅 섹터</strong>가 거래량 기준 1위를 기록했습니다. IONQ는 미 국방부 계약 발표 후 거래량이 전일 대비 <strong>847% 급증</strong>했으며, 관련 섹터 전반에 매수세가 유입되고 있습니다. NVDA는 실적 발표 3일 전 기관 순매수가 증가하는 전형적인 패턴을 보이고 있어 주목이 필요합니다.
+    </div>
+    <div class="ai-highlights">
+      <span class="ai-highlight hot">IONQ 거래량 +847%</span>
+      <span class="ai-highlight up">양자컴퓨팅 섹터 강세</span>
+      <span class="ai-highlight up">NVDA 기관 매수 증가</span>
+      <span class="ai-highlight">반도체 메모리 관망세</span>
+    </div>
+  </div>
+
+  <!-- 거래량 급증 + 매수/매도 강도 -->
+  <div class="signal-grid fade-in delay-2">
+
+    <!-- 거래량 급증 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-wrap">
+          <div class="card-title">📊 거래량 급증 TOP 7</div>
+          <div class="card-subtitle">전일 대비 거래량 증가율</div>
+        </div>
+        <div class="update-badge"><div class="update-dot"></div>실시간</div>
+      </div>
+      <div class="volume-list" id="volumeList"></div>
+    </div>
+
+    <!-- 매수/매도 강도 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-wrap">
+          <div class="card-title">💪 매수/매도 강도</div>
+          <div class="card-subtitle">매수 vs 매도 비율</div>
+        </div>
+        <div class="update-badge"><div class="update-dot"></div>실시간</div>
+      </div>
+      <div class="flow-list" id="flowList"></div>
+    </div>
+  </div>
+
+  <!-- 섹터 히트맵 -->
+  <div class="card fade-in delay-3" style="margin-bottom:16px">
+    <div class="card-header">
+      <div class="card-title-wrap">
+        <div class="card-title">🗺️ 섹터 히트맵</div>
+        <div class="card-subtitle">등락률 · 거래량 강도 시각화</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted)">
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:var(--up);display:inline-block"></span>상승</span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:var(--down);display:inline-block"></span>하락</span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:#e67e22;display:inline-block"></span>급등</span>
+      </div>
+    </div>
+    <div class="heatmap-grid" id="heatmapGrid"></div>
+  </div>
+
+</main>
+
+<script>
+let currentMarket = 'us';
+
+const data = {
+  us: {
+    volume: [
+      { rank:1, name:'IONQ', price:'$38.72', change:'+5.18%', ratio:847, type:'hot' },
+      { rank:2, name:'QBTS', price:'$9.87', change:'+3.76%', ratio:312, type:'up' },
+      { rank:3, name:'NVDA', price:'$131.38', change:'+2.41%', ratio:187, type:'up' },
+      { rank:4, name:'RGTI', price:'$14.22', change:'+7.21%', ratio:156, type:'hot' },
+      { rank:5, name:'APLD', price:'$8.14', change:'-1.32%', ratio:98, type:'down' },
+      { rank:6, name:'MU', price:'$112.55', change:'+0.08%', ratio:42, type:'up' },
+      { rank:7, name:'TSLA', price:'$248.30', change:'-0.84%', ratio:31, type:'down' },
+    ],
+    flow: [
+      { name:'NVDA', buy:82, sell:18, badge:'strong-buy', label:'강력매수' },
+      { name:'IONQ', buy:74, sell:26, badge:'buy', label:'매수우세' },
+      { name:'QBTS', buy:68, sell:32, badge:'buy', label:'매수우세' },
+      { name:'AAPL', buy:52, sell:48, badge:'buy', label:'약매수' },
+      { name:'TSLA', buy:38, sell:62, badge:'sell', label:'매도우세' },
+      { name:'MU', buy:45, sell:55, badge:'sell', label:'약매도' },
+    ],
+    heatmap: [
+      { ticker:'IONQ', pct:'+5.2%', vol:'847%↑', cls:'h-hot' },
+      { ticker:'RGTI', pct:'+7.2%', vol:'312%↑', cls:'h-hot' },
+      { ticker:'NVDA', pct:'+2.4%', vol:'187%↑', cls:'h-up2' },
+      { ticker:'QBTS', pct:'+3.8%', vol:'156%↑', cls:'h-up2' },
+      { ticker:'META', pct:'+1.9%', vol:'기준', cls:'h-up1' },
+      { ticker:'AAPL', pct:'+0.4%', vol:'기준', cls:'h-neu' },
+      { ticker:'MSFT', pct:'+0.7%', vol:'기준', cls:'h-up1' },
+      { ticker:'AMZN', pct:'-0.2%', vol:'기준', cls:'h-neu' },
+      { ticker:'MU', pct:'+0.1%', vol:'42%↑', cls:'h-neu' },
+      { ticker:'TSLA', pct:'-0.8%', vol:'기준', cls:'h-dn1' },
+      { ticker:'APLD', pct:'-1.3%', vol:'98%↑', cls:'h-dn1' },
+      { ticker:'WDC', pct:'-1.5%', vol:'기준', cls:'h-dn2' },
+      { ticker:'INTC', pct:'-2.1%', vol:'기준', cls:'h-dn2' },
+      { ticker:'SMCI', pct:'+3.1%', vol:'기준', cls:'h-up2' },
+      { ticker:'AMD', pct:'+1.2%', vol:'기준', cls:'h-up1' },
+    ],
+    ai: '오늘 미국 시장에서 <strong>양자 컴퓨팅 섹터</strong>가 거래량 기준 1위를 기록했습니다. IONQ는 미 국방부 계약 발표 후 거래량이 전일 대비 <strong>847% 급증</strong>했으며, 관련 섹터 전반에 매수세가 유입되고 있습니다. NVDA는 실적 발표 3일 전 기관 순매수가 증가하는 전형적인 패턴을 보이고 있어 주목이 필요합니다.',
+    highlights: [
+      { text:'IONQ 거래량 +847%', cls:'hot' },
+      { text:'양자컴퓨팅 섹터 강세', cls:'up' },
+      { text:'NVDA 기관 매수 증가', cls:'up' },
+      { text:'반도체 메모리 관망세', cls:'' },
+    ]
+  },
+  kr: {
+    volume: [
+      { rank:1, name:'대한광통신', price:'₩4,850', change:'+5.43%', ratio:634, type:'hot' },
+      { rank:2, name:'SK하이닉스', price:'₩198,500', change:'+3.21%', ratio:278, type:'up' },
+      { rank:3, name:'이오테크닉스', price:'₩87,200', change:'+4.12%', ratio:201, type:'up' },
+      { rank:4, name:'삼성전자', price:'₩72,800', change:'+1.82%', ratio:143, type:'up' },
+      { rank:5, name:'에코프로비엠', price:'₩138,400', change:'+3.42%', ratio:112, type:'up' },
+      { rank:6, name:'한미반도체', price:'₩142,300', change:'-0.84%', ratio:67, type:'down' },
+      { rank:7, name:'LG에너지솔루션', price:'₩412,500', change:'+1.23%', ratio:44, type:'up' },
+    ],
+    flow: [
+      { name:'SK하이닉스', buy:79, sell:21, badge:'strong-buy', label:'강력매수' },
+      { name:'삼성전자', buy:71, sell:29, badge:'buy', label:'매수우세' },
+      { name:'대한광통신', buy:65, sell:35, badge:'buy', label:'매수우세' },
+      { name:'에코프로비엠', buy:58, sell:42, badge:'buy', label:'약매수' },
+      { name:'한미반도체', buy:41, sell:59, badge:'sell', label:'매도우세' },
+      { name:'POSCO홀딩스', buy:44, sell:56, badge:'sell', label:'약매도' },
+    ],
+    heatmap: [
+      { ticker:'대한광통신', pct:'+5.4%', vol:'634%↑', cls:'h-hot' },
+      { ticker:'이오테크닉스', pct:'+4.1%', vol:'201%↑', cls:'h-up2' },
+      { ticker:'에코프로비엠', pct:'+3.4%', vol:'112%↑', cls:'h-up2' },
+      { ticker:'SK하이닉스', pct:'+3.2%', vol:'278%↑', cls:'h-up2' },
+      { ticker:'삼성SDI', pct:'+2.2%', vol:'기준', cls:'h-up1' },
+      { ticker:'삼성전자', pct:'+1.8%', vol:'143%↑', cls:'h-up1' },
+      { ticker:'LG에너지솔', pct:'+1.2%', vol:'44%↑', cls:'h-up1' },
+      { ticker:'카카오', pct:'+0.3%', vol:'기준', cls:'h-neu' },
+      { ticker:'네이버', pct:'-0.1%', vol:'기준', cls:'h-neu' },
+      { ticker:'한미반도체', pct:'-0.8%', vol:'67%↑', cls:'h-dn1' },
+      { ticker:'POSCO', pct:'-1.1%', vol:'기준', cls:'h-dn1' },
+      { ticker:'현대차', pct:'-0.5%', vol:'기준', cls:'h-dn1' },
+      { ticker:'기아', pct:'-0.3%', vol:'기준', cls:'h-neu' },
+      { ticker:'셀트리온', pct:'+0.8%', vol:'기준', cls:'h-up1' },
+      { ticker:'카카오뱅크', pct:'-1.8%', vol:'기준', cls:'h-dn2' },
+    ],
+    ai: '오늘 한국 시장에서 <strong>광통신 섹터</strong>가 가장 뜨거웠습니다. 대한광통신은 데이터센터 수주 기대감으로 거래량이 <strong>634% 급증</strong>하며 상한가에 근접했습니다. SK하이닉스는 외국인 순매수가 지속되며 HBM3E 양산 모멘텀이 주가에 반영되는 모습입니다.',
+    highlights: [
+      { text:'대한광통신 거래량 +634%', cls:'hot' },
+      { text:'HBM 반도체 섹터 강세', cls:'up' },
+      { text:'외국인 SK하이닉스 매수', cls:'up' },
+      { text:'2차전지 단기 차익실현', cls:'' },
+    ]
+  }
+};
+
+function renderVolume(market) {
+  const list = document.getElementById('volumeList');
+  list.innerHTML = data[market].volume.map(d => `
+    <div class="volume-item" onclick="analyzeStock('${d.name}')">
+      <div class="volume-item-header">
+        <span class="volume-rank">#${d.rank}</span>
+        <span class="volume-name">${d.name}</span>
+        <span class="volume-price">${d.price}</span>
+        <span class="volume-change vol-${d.type === 'hot' ? 'up' : d.type}">${d.change}</span>
+      </div>
+      <div class="volume-bar-wrap">
+        <div class="volume-bar-bg">
+          <div class="volume-bar-fill ${d.type}" style="width:${Math.min(d.ratio/10, 100)}%"></div>
+        </div>
+        <span class="volume-label ${d.type}">+${d.ratio}%</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFlow(market) {
+  const list = document.getElementById('flowList');
+  list.innerHTML = data[market].flow.map(d => `
+    <div class="flow-item" onclick="analyzeStock('${d.name}')">
+      <div class="flow-item-top">
+        <span class="flow-name">${d.name}</span>
+        <span class="flow-badge ${d.badge}">${d.label}</span>
+      </div>
+      <div class="flow-bar-wrap">
+        <div class="flow-bar-buy" style="width:${d.buy}%"></div>
+        <div class="flow-bar-sell" style="width:${d.sell}%"></div>
+      </div>
+      <div class="flow-meta">
+        <span style="color:var(--up)">매수 ${d.buy}%</span>
+        <span style="color:var(--down)">매도 ${d.sell}%</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderHeatmap(market) {
+  const grid = document.getElementById('heatmapGrid');
+  grid.innerHTML = data[market].heatmap.map(d => `
+    <div class="heatmap-cell ${d.cls}" onclick="analyzeStock('${d.ticker}')">
+      <div class="heatmap-ticker">${d.ticker}</div>
+      <div class="heatmap-pct">${d.pct}</div>
+      <div class="heatmap-vol">${d.vol}</div>
+    </div>
+  `).join('');
+}
+
+function renderAI(market) {
+  document.getElementById('aiContent').innerHTML = data[market].ai;
+  const hl = document.querySelector('.ai-highlights');
+  hl.innerHTML = data[market].highlights.map(h =>
+    `<span class="ai-highlight ${h.cls}">${h.text}</span>`
+  ).join('');
+}
+
+function switchMarket(market, btn) {
+  currentMarket = market;
+  document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll(market);
+}
+
+function renderAll(market) {
+  renderVolume(market);
+  renderFlow(market);
+  renderHeatmap(market);
+  renderAI(market);
+}
+
+function setFilter(type, btn) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function analyzeStock(name) {
+  window.location.href = `brevia-app.html`;
+}
+
+function refreshData() {
+  const btn = document.querySelector('.btn-ink');
+  btn.textContent = '새로고침 중...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> 새로고침`;
+    btn.disabled = false;
+  }, 1000);
+}
+
+// 시간
+const now = new Date();
+document.getElementById('analysisTime').textContent =
+  `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')} 업데이트`;
+
+renderAll('us');
+</script>
+</body>
+</html>
