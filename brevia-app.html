@@ -394,7 +394,12 @@ async function sendMessage() {
     });
     const data = await res.json();
     removeTyping();
-    const reply = data?.content?.[0]?.text || data?.error || '응답을 받지 못했어요.';
+    let reply = '응답을 받지 못했어요.';
+    if (data?.content && Array.isArray(data.content) && data.content[0]?.text) {
+      reply = data.content[0].text;
+    } else if (data?.error) {
+      reply = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+    }
 
     // AI 응답도 히스토리에 추가
     sess.messages.push({ role: 'assistant', content: reply });
