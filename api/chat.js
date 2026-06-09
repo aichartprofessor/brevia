@@ -1,26 +1,29 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { messages, system, model, max_tokens } = req.body;
+  const { messages, system } = req.body;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: model || 'claude-sonnet-4-20250514',
-        max_tokens: max_tokens || 1000,
-        system,
-        messages
-      })
-    });
+    const contents = messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: system }] },
+          contents
+        })
+      }
+    );
 
     const data = await response.json();
-    res.setHeader('Content-Type', 'application/json'); res.status(200).json(data);;
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '응답을 받지 못했어요.';
+    res.status(200).json({ content: [{ text }] });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
