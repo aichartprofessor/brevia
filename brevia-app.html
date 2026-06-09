@@ -329,6 +329,8 @@ function renderMessage(role, content, animate = true) {
 }
 
 function formatMarkdown(text) {
+  if (!text) return '';
+  text = String(text);
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^#{1,3} (.+)$/gm, '<strong style="font-size:15px">$1</strong>')
