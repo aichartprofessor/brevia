@@ -400,9 +400,9 @@ async function sendMessage() {
     updateTokenCount();
   } catch (e) {
     removeTyping();
-    // 실패 시 마지막 유저 메시지 히스토리에서 제거
     sess.messages.pop();
-    renderMessage('ai', '⚠️ 연결 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
+    console.error('에러 상세:', e);
+    renderMessage('ai', `⚠️ 오류: ${e.message}`);
   }
 
   isLoading = false;
