@@ -380,14 +380,14 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const res = await fetch('https:////api/chat', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         system: systemPrompts[currentMode],
-        messages: sess.messages  // 전체 히스토리 전송
+        messages: sess.messages
       })
     });
     const data = await res.json();
