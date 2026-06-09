@@ -392,7 +392,7 @@ async function sendMessage() {
     });
     const data = await res.json();
     removeTyping();
-    const reply = data.content?.[0]?.text || '응답을 받지 못했어요.';
+    const reply = data?.content?.[0]?.text || data?.error || '응답을 받지 못했어요.';
 
     // AI 응답도 히스토리에 추가
     sess.messages.push({ role: 'assistant', content: reply });
